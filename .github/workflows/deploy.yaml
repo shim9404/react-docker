@@ -25,7 +25,7 @@ jobs:
             set -x
 
             APP_DIR=/home/ubuntu/vite-react-app
-            REPO_URL="https://github.com/slalom0914/react-docker1.git"
+            REPO_URL="https://github.com/shim9404/react-docker.git"
             DEV_PORT=5173
 
             # 1)최초 1회 clone하고 이후부터는 pull하기
