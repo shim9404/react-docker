@@ -1,0 +1,42 @@
+name: Deploy Vite React to EC2
+
+# Event설정하기
+# main이라는 브랜치에 push발생하면 아래 workflow실행한다.
+on:
+  push:
+    branches:
+      - main
+
+# 하나의 workflow는 1개 이상의 Job으로 구성된다.
+# 하나의 Job은 여러 Step으로 구성할 수 있다.
+jobs:
+  ec2deploy:
+    runs-on: ubuntu-latest
+
+    steps: #특정 작업을 수행하는 가장 작은 단위
+      - name: EC2서버에 접속하기 #step에 붙이는 이름
+        uses: appleboy/ssh-action@v1 #실행시킬 리눅스 명령어 작성
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            set -e
+            set -x
+
+            APP_DIR=/home/ubuntu/vite-react-app
+            REPO_URL="https://github.com/slalom0914/react-docker1.git"
+            DEV_PORT=5173
+
+            # 1)최초 1회 clone하고 이후부터는 pull하기
+            if [ ! -d "$APP_DIR/.git" ]; then
+              sudo mkdir -p $APP_DIR
+              sudo chown -R $USER:$USER $APP_DIR
+              git clone $REPO_URL $APP_DIR
+            fi
+
+            cd $APP_DIR
+            git checkout main
+            git pull origin main
+            # 2)의존성 설치 -> package-lock.json기준
+            npm ci
