@@ -1,13 +1,9 @@
 ## 리액트 프로젝트 자동배포하기(vite버전)
 ```sh
 npm create vite@latest
-
 frameworkt선택 - react
-
 variant선택 - javascript
-
 엔터 - 디폴트
-
 엔터 - yes
 
 ```
@@ -41,22 +37,25 @@ git push -u origin main
 
 ### Github Actions 디플로이 파일 작성
 ```yml
-set -e
-#변수 선언하기
-APP_DIR=/home/ubuntu/vite-react-app
-REPO_URL="https://github.com/slalom0914/react-docker1.git"
-DEV_PORT=5173
-# 1)최초 1회 clone하고 이후부터는 pull하기
-if [! -d "$APP_DIR/.git"]; then
-  sudo mkdir -p $APP_DIR
-  sudo chown -R $USER:$USER $APP_DIR
-  git clone $REPO_URL $APP_DIR
-fi
-cd $APP_DIR
-git checkout main
-git pull origin main
-# 2)의존성 설치 -> package-lock.json기준
-npm ci
+ set -e
+  set -x
+
+  APP_DIR=/home/ubuntu/vite-react-app
+  REPO_URL="https://github.com/slalom0914/react-docker1.git"
+  DEV_PORT=5173
+
+  # 1)최초 1회 clone하고 이후부터는 pull하기
+  if [ ! -d "$APP_DIR/.git" ]; then
+    sudo mkdir -p $APP_DIR
+    sudo chown -R $USER:$USER $APP_DIR
+    git clone $REPO_URL $APP_DIR
+  fi
+
+  cd $APP_DIR
+  git checkout main
+  git pull origin main
+  # 2)의존성 설치 -> package-lock.json기준
+  npm ci
 
 # 3)기존 서버 종료(포트 기준으로 kill하기)
 # 실행 중이 아니더라도 실패하지 않도록 true옵션 추가
