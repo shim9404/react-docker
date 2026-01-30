@@ -38,5 +38,4 @@ jobs:
             cd $APP_DIR
             git checkout main
             git pull origin main
-            # 2)의존성 설치 -> package-lock.json기준
             npm ci
